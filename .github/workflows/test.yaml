@@ -1,0 +1,32 @@
+name: test MacOS 13
+
+on:
+  push:
+    branches:
+      - develop
+  schedule:
+    - cron: '4 * * * *'
+
+jobs:
+  variables:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+      - name: check OSX version
+        run: xcrun agvtool new-version -all $(date +'%Y%m%d%H')
+
+  Certificate:
+    needs:
+      - variables
+    runs-on: macos-13
+    steps:
+      - name: install apple certificate
+        run: echo "install apple certificate"
+
+  Provisionning:
+    needs:
+      - variables
+    runs-on: macos-13
+    steps:
+      - name: install apple provisionning
+        run: echo "install apple provisionning"
