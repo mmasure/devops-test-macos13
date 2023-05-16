@@ -13,7 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: check OSX version
-        run: xcrun agvtool new-version -all $(date +'%Y%m%d%H')
+        run: sw_vers
+      - name: get Xcode version
+        run: echo "xcode_version=${/usr/bin/xcodebuild -version}" >> $GITHUB_ENV
+      - name: show xcode version
+        run: echo ${env:xcode_version:5}"
+      - name: ls application xcode
+        run: ls /Applications/ | grep "Xcode_"
 
   Certificate:
     needs:
