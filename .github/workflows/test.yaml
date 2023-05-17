@@ -25,9 +25,9 @@ jobs:
       - name: check OSX version
         run: sw_vers --productVersion
       - name: show Xcode version
-        run: echo /usr/bin/xcodebuild -version
+        run: echo xcodebuild -version #| grep "Xcode_\d{0,2}(\.\d{1,2})"
       - name: Failed switch Xcode if not equals
-        if: ${{ false }}
+        if: ${{ false }} # change to ${{ xcodebuildVersion == steps.common_vars.outputs.xcodeVersion }}
         run: exit 1
 
   Certificate:
