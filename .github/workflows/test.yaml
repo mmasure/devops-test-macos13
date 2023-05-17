@@ -29,7 +29,12 @@ jobs:
       - name: Failed switch Xcode if not equals
         if: ${{ false }} # change to ${{ xcodebuildVersion == steps.common_vars.outputs.xcodeVersion }}
         run: exit 1
-
+      - name: dump
+        run: |
+          echo 'github.workspace === ${{ github.workspace }}'
+          echo "GITHUB_WORKSPACE === $GITHUB_WORKSPACE"
+          echo 'runner.workspace === ${{ runner.workspace }}'
+          echo "RUNNER_WORKSPACE === $RUNNER_WORKSPACE"
 
   Certificate:
     needs:
@@ -40,11 +45,11 @@ jobs:
       - name: install apple certificate
         run: echo "install apple certificate"
       - name: curl get provisionning
-        run: curl https://reqbin.com/echo /test/devops/macos/provisionning.txt
+        run: curl -o ${{ github.workspace }}/certificate https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
           name: devops-test-arti
-          path: /test/devops/macos/
+          path: ${{ github.workspace }}
 
   Provisionning:
     needs:
@@ -55,11 +60,11 @@ jobs:
       - name: install apple provisionning
         run: echo "install apple provisionning"
       - name: curl get provisionning
-        run: curl https://reqbin.com/echo /test/devops/macos/provisionning.txt
+        run: curl -o ${{ github.workspace }}/provisionning https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
           name: devops-test-arti
-          path: /test/devops/macos/
+          path: ${{ github.workspace }}
 
   Build:
     needs:
@@ -71,6 +76,6 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: devops-test-arti
-          path: /test/devops/macos/
+          path: ${{ github.workspace }}
       - name: check download artifact
         run: ls -l /test/devops/macos/
