@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - develop
-  schedule:
-    - cron: '*/2 * * * *'
+    schedule:
+      - cron: '*/2 * * * *'
 
 jobs:
   variables:
@@ -35,6 +35,27 @@ jobs:
           echo "GITHUB_WORKSPACE === $GITHUB_WORKSPACE"
           echo 'runner.workspace === ${{ runner.workspace }}'
           echo "RUNNER_WORKSPACE === $RUNNER_WORKSPACE"
+      - name: show permissions github workspace
+        run: ls -la ${{ github.workspace }}
+      - name: show permission runner workspace
+        run: ls -la ${{ runner.workspace }}
+
+  Cache:
+    build:
+      runs-on: macos-13
+      steps:
+        - uses: actions/checkout@v3
+        - name: Cache Primes
+          id: cache-primes
+          uses: actions/cache@v3
+          with:
+            path: test/cache
+            key: ${{ runner.os }}-primes
+        - name: Generate Prime Numbers
+          if: steps.cache-primes.outputs.cache-hit != 'true'
+          run: /generate-primes.sh -d prime-numbers
+        - name: Use Prime Numbers
+          run: /primes.sh -d prime-numbers
 
   Certificate:
     needs:
@@ -45,13 +66,13 @@ jobs:
       - name: install apple certificate
         run: echo "install apple certificate"
       - name: curl get provisionning
-        run: curl -o ${{ github.workspace }}/certificate https://reqbin.com/echo
+        run: curl -o ${{ runner.workspace }}/certificate https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
-          name: devops-test-arti
+          name: artifact
           path: ${{ github.workspace }}
 
-  Provisionning:
+  Provisioning:
     needs:
       - variables
     runs-on: macos-13
@@ -60,22 +81,30 @@ jobs:
       - name: install apple provisionning
         run: echo "install apple provisionning"
       - name: curl get provisionning
-        run: curl -o ${{ github.workspace }}/provisionning https://reqbin.com/echo
+        run: curl -o ${{ runner.workspace }}/provisionning https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
-          name: devops-test-arti
+          name: artifact
           path: ${{ github.workspace }}
+      - name: show permissions github workspace
+        run: ls -la ${{ github.workspace }}
+      - name: show permission runner workspace
+        run: ls -la ${{ runner.workspace }}
 
   Build:
     needs:
       - Certificate
-      - Provisionning
+      - Provisioning
     runs-on: macos-13
     steps:
       - uses: actions/checkout@master
+      - name: show permissions github workspace
+        run: ls -la ${{ github.workspace }}
+      - name: show permission runner workspace
+        run: ls -la ${{ runner.workspace }}
       - uses: actions/download-artifact@master
         with:
-          name: devops-test-arti
-          path: ${{ github.workspace }}
+          name: artifact
+          path: ${{ runner.workspace }}
       - name: check download artifact
-        run: ls -l /test/devops/macos/
+        run: ls -l ${{ runner.workspace }}
