@@ -8,27 +8,26 @@ on:
       - cron: '*/2 * * * *'
 
 jobs:
-  cache:
+  Cache:
+    name: Set cache
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
-      - name: Cache Primes
-        id: cache-primes
-        uses: actions/cache@v3
+      - run: |
+          mkdir -p ${{ runner.workspace }}/cache
+          echo "test" >> ${{ runner.workspace }}/cache/test.txt
+      - id: cache
+        uses: actions/cache/save@v3
         with:
-          path: test/cache
-          key: ${{ runner.os }}-primes
-      - name: Generate Prime Numbers
-        if: steps.cache-primes.outputs.cache-hit != 'true'
-        run: /generate-primes.sh -d prime-numbers
-      - name: Use Prime Numbers
-        run: /primes.sh -d prime-numbers
+          path: ${{ runner.workspace }}
+          key: ${{ runner.os }}-cache
 
-  variables:
+  Variables:
+    name: Set variables
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
-      - name: get vars common variables
+      - name: Get common variables
         id: common_vars
         uses: CumulusDS/get-yaml-paths-action@v1.0.1
         with:
@@ -57,6 +56,7 @@ jobs:
         run: ls -la ${{ runner.workspace }}
 
   Certificate:
+    name: Get apple certificate
     needs:
       - variables
       - cache
@@ -65,14 +65,25 @@ jobs:
       - uses: actions/checkout@v3
       - name: install apple certificate
         run: echo "install apple certificate"
+      - uses: actions/cache/restore@v3
+        id: cache-restore-certificate
+        with:
+          path: ${{ runner.workspace }}
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
       - name: curl get provisionning
-        run: curl -o ${{ runner.workspace }}/certificate https://reqbin.com/echo
+        run: curl -o ${{ runner.workspace }}/cache/certificate.txt https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
           name: artifact
           path: ${{ github.workspace }}
+      - id: cache
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ runner.workspace }}
+          key: ${{ runner.os }}-cache
 
   Provisioning:
+    name: Get apple provisioning
     needs:
       - variables
       - cache
@@ -81,18 +92,29 @@ jobs:
       - uses: actions/checkout@v3
       - name: install apple provisionning
         run: echo "install apple provisionning"
+      - uses: actions/cache/restore@v3
+        id: cache-restore-provisioning
+        with:
+          path: ${{ runner.workspace }}
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
       - name: curl get provisionning
-        run: curl -o ${{ runner.workspace }}/provisionning https://reqbin.com/echo
+        run: curl -o ${{ runner.workspace }}/cache/provisioning.txt https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
           name: artifact
           path: ${{ github.workspace }}
+      - id: cache
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ runner.workspace }}
+          key: ${{ runner.os }}-cache
       - name: show permissions github workspace
         run: ls -la ${{ github.workspace }}
       - name: show permission runner workspace
         run: ls -la ${{ runner.workspace }}
 
   Build:
+    name: Build IOS App
     needs:
       - Certificate
       - Provisioning
@@ -103,9 +125,16 @@ jobs:
         run: ls -la ${{ github.workspace }}
       - name: show permission runner workspace
         run: ls -la ${{ runner.workspace }}
+      - uses: actions/cache/restore@v3
+        id: cache-restore
+        with:
+          path: ${{ runner.workspace }}
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+      - name: first check download artifact
+        run: ls -l ${{ runner.workspace }}/cache
       - uses: actions/download-artifact@master
         with:
           name: artifact
           path: ${{ runner.workspace }}
-      - name: check download artifact
+      - name: second check download artifact
         run: ls -l ${{ runner.workspace }}
