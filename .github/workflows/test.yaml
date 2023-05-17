@@ -5,21 +5,30 @@ on:
     branches:
       - develop
   schedule:
-    - cron: '4 * * * *'
+    - cron: '*/2 * * * *'
 
 jobs:
   variables:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
+      - name: get vars common variables
+        id: common_vars
+        uses: CumulusDS/get-yaml-paths-action@v1.0.1
+        with:
+          file: .github/workflows/config/env.test.yml
+          var: test
+          xcodeVersion: xcode.version
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ steps.common_vars.outputs.xcodeVersion }}
       - name: check OSX version
-        run: sw_vers
-      - name: get Xcode version
-        run: echo "xcode_version=${/usr/bin/xcodebuild -version}" >> $GITHUB_ENV
-      - name: show xcode version
-        run: echo ${env:xcode_version:5}"
-      - name: ls application xcode
-        run: ls /Applications/ | grep "Xcode_"
+        run: sw_vers --productVersion
+      - name: show Xcode version
+        run: echo /usr/bin/xcodebuild -version
+      - name: Failed switch Xcode if not equals
+        if: ${{ false }}
+        run: exit 1
 
   Certificate:
     needs:
