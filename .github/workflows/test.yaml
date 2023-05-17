@@ -30,18 +30,47 @@ jobs:
         if: ${{ false }} # change to ${{ xcodebuildVersion == steps.common_vars.outputs.xcodeVersion }}
         run: exit 1
 
+
   Certificate:
     needs:
       - variables
     runs-on: macos-13
     steps:
+      - uses: actions/checkout@v3
       - name: install apple certificate
         run: echo "install apple certificate"
+      - name: curl get provisionning
+        run: curl https://reqbin.com/echo /test/devops/macos/provisionning.txt
+      - uses: actions/upload-artifact@master
+        with:
+          name: devops-test-arti
+          path: /test/devops/macos/
 
   Provisionning:
     needs:
       - variables
     runs-on: macos-13
     steps:
+      - uses: actions/checkout@v3
       - name: install apple provisionning
         run: echo "install apple provisionning"
+      - name: curl get provisionning
+        run: curl https://reqbin.com/echo /test/devops/macos/provisionning.txt
+      - uses: actions/upload-artifact@master
+        with:
+          name: devops-test-arti
+          path: /test/devops/macos/
+
+  Build:
+    needs:
+      - Certificate
+      - Provisionning
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/download-artifact@master
+        with:
+          name: devops-test-arti
+          path: /test/devops/macos/
+      - name: check download artifact
+        run: ls -l /test/devops/macos/
