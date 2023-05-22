@@ -119,7 +119,7 @@ jobs:
       - name: show permissions github workspace
         run: ls -la ${{ github.workspace }}
       - name: build app
-        run: xcodebuild clean build
+        run: xcodebuild clean build -allowProvisioningUpdates
 #      - name: show permission runner workspace
 #        run: ls -la ${{ runner.workspace }}
 #      - uses: actions/cache/restore@v3
