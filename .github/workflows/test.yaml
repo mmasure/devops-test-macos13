@@ -72,13 +72,8 @@ jobs:
         with:
           path: ${{ runner.workspace }}
           key: ${{ runner.os }}-cache-provisionning
-#      - uses: actions/cache/restore@v3
-#        id: cache-restore-certificate
-#        with:
-#          path: ${{ runner.workspace }}
-#          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
       - name: curl get provisionning
-        run: curl -o ${{ runner.workspace }}/certificate/certificate.txt https://reqbin.com/echo
+        run: curl -o ${{ runner.workspace }}/certificate/p12.txt https://reqbin.com/echo
       - uses: actions/upload-artifact@master
         with:
           name: artifact
@@ -99,17 +94,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: install apple provisionning
         run: echo "install apple provisionning"
-#      - uses: actions/cache/restore@v3
-#        id: cache-restore-provisioning
-#        with:
-#          path: ${{ runner.workspace }}
-#          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+      - run: |
+          mkdir -p ${{ runner.workspace }}/provisioning
       - name: curl get provisionning
-        run: curl -o ${{ runner.workspace }}/cache/provisioning.txt https://reqbin.com/echo
-#      - uses: actions/upload-artifact@master
-#        with:
-#          name: artifact
-#          path: ${{ github.workspace }}
+        run: curl -o ${{ runner.workspace }}/provisioning/pblist.txt https://reqbin.com/echo
 #      - id: cache
 #        uses: actions/cache/save@v3
 #        with:
@@ -130,7 +118,6 @@ jobs:
       - uses: actions/checkout@master
       - name: show permissions github workspace
         run: ls -la ${{ github.workspace }}
-
 #      - name: show permission runner workspace
 #        run: ls -la ${{ runner.workspace }}
 #      - uses: actions/cache/restore@v3
@@ -140,9 +127,9 @@ jobs:
 #          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
 #      - name: first check download artifact
 #        run: ls -l ${{ runner.workspace }}/cache
-#      - uses: actions/download-artifact@master
-#        with:
-#          name: artifact
-#          path: ${{ runner.workspace }}
-#      - name: second check download artifact
-#        run: ls -l ${{ runner.workspace }}
+      - uses: actions/download-artifact@master
+        with:
+          name: artifact
+          path: ${{ runner.workspace }}
+      - name: second check download artifact
+        run: ls -l ${{ runner.workspace }}
