@@ -54,12 +54,24 @@ jobs:
 #        run: ls -la ${{ github.workspace }}
 #      - name: show permission runner workspace
 #        run: ls -la ${{ runner.workspace }}
+  Localization:
+    name: Get localization files
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+#      - name: curl get provisionning
+#        run:
+#        curl -o ${{ runner.workspace }}/localization/fr.txt -H "Authorization: Loco $(LOCOTOKEN)" https://localise.biz/api/export/locale/fr_FR.strings?format=simple&toto=$(date +"%Y%m%d%H%M%S%0000") +"%Y%m%d%H%M%S%0000")
+#        run: curl -o ${{ runner.workspace }}/localization/fr.txt https://reqbin.com/echo
+      - name: curl localization files
+        run: echo "curl localization files"
 
   Certificate:
     name: Get apple certificate
     needs:
       - variables
       - cache
+      - Localization
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
@@ -74,10 +86,14 @@ jobs:
           key: ${{ runner.os }}-cache-provisionning
       - name: curl get provisionning
         run: curl -o ${{ runner.workspace }}/certificate/p12.txt https://reqbin.com/echo
-      - uses: actions/upload-artifact@master
+      - uses: apple-actions/import-codesign-certs@v2
         with:
-          name: artifact
-          path: ${{ github.workspace }}
+          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+#          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+#      - uses: actions/upload-artifact@master
+#        with:
+#          name: artifact
+#          path: ${{ github.workspace }}
 #      - id: cache
 #        uses: actions/cache/save@v3
 #        with:
@@ -89,6 +105,7 @@ jobs:
     needs:
       - variables
       - cache
+      - Localization
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
@@ -96,8 +113,12 @@ jobs:
         run: echo "install apple provisionning"
       - run: |
           mkdir -p ${{ runner.workspace }}/provisioning
-      - name: curl get provisionning
-        run: curl -o ${{ runner.workspace }}/provisioning/pblist.txt https://reqbin.com/echo
+      - uses: nickwph/apple-provisioning-profile-action@v1
+        with:
+          profile-base64: ${{ secrets.PROVISIONING_PROFILE }}
+#          profile-file: ${{ secrets.CERTIFICATE_PATH }}
+#      - name: curl get provisionning
+#        run: curl -o ${{ runner.workspace }}/provisioning/pblist.txt https://reqbin.com/echo
 #      - id: cache
 #        uses: actions/cache/save@v3
 #        with:
