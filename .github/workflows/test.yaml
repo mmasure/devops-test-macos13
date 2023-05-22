@@ -44,16 +44,16 @@ jobs:
       - name: Failed switch Xcode if not equals
         if: ${{ false }} # change to ${{ xcodebuildVersion == steps.common_vars.outputs.xcodeVersion }}
         run: exit 1
-      - name: dump
-        run: |
-          echo 'github.workspace === ${{ github.workspace }}'
-          echo "GITHUB_WORKSPACE === $GITHUB_WORKSPACE"
-          echo 'runner.workspace === ${{ runner.workspace }}'
-          echo "RUNNER_WORKSPACE === $RUNNER_WORKSPACE"
-      - name: show permissions github workspace
-        run: ls -la ${{ github.workspace }}
-      - name: show permission runner workspace
-        run: ls -la ${{ runner.workspace }}
+#      - name: dump
+#        run: |
+#          echo 'github.workspace === ${{ github.workspace }}'
+#          echo "GITHUB_WORKSPACE === $GITHUB_WORKSPACE"
+#          echo 'runner.workspace === ${{ runner.workspace }}'
+#          echo "RUNNER_WORKSPACE === $RUNNER_WORKSPACE"
+#      - name: show permissions github workspace
+#        run: ls -la ${{ github.workspace }}
+#      - name: show permission runner workspace
+#        run: ls -la ${{ runner.workspace }}
 
   Certificate:
     name: Get apple certificate
@@ -65,22 +65,29 @@ jobs:
       - uses: actions/checkout@v3
       - name: install apple certificate
         run: echo "install apple certificate"
-      - uses: actions/cache/restore@v3
-        id: cache-restore-certificate
-        with:
-          path: ${{ runner.workspace }}
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-      - name: curl get provisionning
-        run: curl -o ${{ runner.workspace }}/cache/certificate.txt https://reqbin.com/echo
-      - uses: actions/upload-artifact@master
-        with:
-          name: artifact
-          path: ${{ github.workspace }}
+      - run: |
+          mkdir -p ${{ runner.workspace }}/certificate
       - id: cache
         uses: actions/cache/save@v3
         with:
           path: ${{ runner.workspace }}
-          key: ${{ runner.os }}-cache
+          key: ${{ runner.os }}-cache-provisionning
+#      - uses: actions/cache/restore@v3
+#        id: cache-restore-certificate
+#        with:
+#          path: ${{ runner.workspace }}
+#          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+      - name: curl get provisionning
+        run: curl -o ${{ runner.workspace }}/certificate/certificate.txt https://reqbin.com/echo
+      - uses: actions/upload-artifact@master
+        with:
+          name: artifact
+          path: ${{ github.workspace }}
+#      - id: cache
+#        uses: actions/cache/save@v3
+#        with:
+#          path: ${{ runner.workspace }}
+#          key: ${{ runner.os }}-cache
 
   Provisioning:
     name: Get apple provisioning
@@ -92,26 +99,26 @@ jobs:
       - uses: actions/checkout@v3
       - name: install apple provisionning
         run: echo "install apple provisionning"
-      - uses: actions/cache/restore@v3
-        id: cache-restore-provisioning
-        with:
-          path: ${{ runner.workspace }}
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+#      - uses: actions/cache/restore@v3
+#        id: cache-restore-provisioning
+#        with:
+#          path: ${{ runner.workspace }}
+#          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
       - name: curl get provisionning
         run: curl -o ${{ runner.workspace }}/cache/provisioning.txt https://reqbin.com/echo
-      - uses: actions/upload-artifact@master
-        with:
-          name: artifact
-          path: ${{ github.workspace }}
-      - id: cache
-        uses: actions/cache/save@v3
-        with:
-          path: ${{ runner.workspace }}
-          key: ${{ runner.os }}-cache
-      - name: show permissions github workspace
-        run: ls -la ${{ github.workspace }}
-      - name: show permission runner workspace
-        run: ls -la ${{ runner.workspace }}
+#      - uses: actions/upload-artifact@master
+#        with:
+#          name: artifact
+#          path: ${{ github.workspace }}
+#      - id: cache
+#        uses: actions/cache/save@v3
+#        with:
+#          path: ${{ runner.workspace }}
+#          key: ${{ runner.os }}-cache
+#      - name: show permissions github workspace
+#        run: ls -la ${{ github.workspace }}
+#      - name: show permission runner workspace
+#        run: ls -la ${{ runner.workspace }}
 
   Build:
     name: Build IOS App
@@ -123,18 +130,19 @@ jobs:
       - uses: actions/checkout@master
       - name: show permissions github workspace
         run: ls -la ${{ github.workspace }}
-      - name: show permission runner workspace
-        run: ls -la ${{ runner.workspace }}
-      - uses: actions/cache/restore@v3
-        id: cache-restore
-        with:
-          path: ${{ runner.workspace }}
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-      - name: first check download artifact
-        run: ls -l ${{ runner.workspace }}/cache
-      - uses: actions/download-artifact@master
-        with:
-          name: artifact
-          path: ${{ runner.workspace }}
-      - name: second check download artifact
-        run: ls -l ${{ runner.workspace }}
+
+#      - name: show permission runner workspace
+#        run: ls -la ${{ runner.workspace }}
+#      - uses: actions/cache/restore@v3
+#        id: cache-restore
+#        with:
+#          path: ${{ runner.workspace }}
+#          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+#      - name: first check download artifact
+#        run: ls -l ${{ runner.workspace }}/cache
+#      - uses: actions/download-artifact@master
+#        with:
+#          name: artifact
+#          path: ${{ runner.workspace }}
+#      - name: second check download artifact
+#        run: ls -l ${{ runner.workspace }}
