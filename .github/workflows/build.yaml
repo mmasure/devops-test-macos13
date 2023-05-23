@@ -68,12 +68,7 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Build the app
-        run: xcodebuild \
-          -scheme HelloWorld \
-          -archivePath ci-ios-app.xcarchive \
-          -sdk iphoneos \
-          archive \
-          -allowProvisioningUpdates
+        run: xcodebuild -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive -allowProvisioningUpdates
       #      - name: show permission runner workspace
       #        run: ls -la ${{ runner.workspace }}
       #      - uses: actions/cache/restore@v3
