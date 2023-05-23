@@ -72,7 +72,7 @@ jobs:
       - name: Check files if exist 2
         run: security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/4f3ad50f-ece3-4416-936e-3c56b5bb5a00.mobileprovision
       - name: Build the app
-        run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No
+        run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=4f3ad50f-ece3-4416-936e-3c56b5bb5a00
       - name: Build the app
         run: xcodebuild -exportArchive -archivePath ci-ios-app.xcarchive -exportPath Release -exportOptionsPlist build.plist -allowProvisioningUpdates
 #      - name: Upload the artifact
