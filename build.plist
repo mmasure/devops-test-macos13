@@ -4,10 +4,14 @@
     <dict>
         <key>compileBitcode</key>
         <false/>
+        <key>aps-environment</key>
+        <string>production</string>
         <key>method</key>
         <string>app-store</string>
         <key>teamID</key>
         <string>34Z37D37V7</string>
+        <key>signingStyle</key>
+        <string>manual</string>
         <key>signingCertificate</key>
         <string>Apple Distribution: WDS (34Z37D37V7)</string>
         <key>provisioningProfiles</key>
