@@ -46,13 +46,14 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - uses: apple-actions/import-codesign-certs@v2
+        name: Install the Apple certificate
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
           p12-filepath: $RUNNER_TEMP/build_certificate.p12
           keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
           keychain: $RUNNER_TEMP/app-signing.keychain-db
-      - name: Install the Apple certificate and provisioning profile
+      - name: Install the Apple provisioning profile
         env:
           BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -66,7 +67,7 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-      - name: build app
+      - name: Build the app
         run: xcodebuild clean build
       #      - name: show permission runner workspace
       #        run: ls -la ${{ runner.workspace }}
@@ -77,9 +78,9 @@ jobs:
       #          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
       #      - name: first check download artifact
       #        run: ls -l ${{ runner.workspace }}/cache
-      - uses: actions/download-artifact@master
-        with:
-          name: artifact
-          path: ${{ runner.workspace }}
-      - name: second check download artifact
-        run: ls -l ${{ runner.workspace }}
+#      - uses: actions/download-artifact@master
+#        with:
+#          name: artifact
+#          path: ${{ runner.workspace }}
+#      - name: second check download artifact
+#        run: ls -l ${{ runner.workspace }}
