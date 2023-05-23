@@ -67,8 +67,20 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Check files if exist
+        run: ls -la ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Build the app
-        run: xcodebuild -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive -allowProvisioningUpdates
+        run: xcodebuild \
+          -scheme HelloWorld \
+          -archivePath ci-ios-app.xcarchive \
+          -sdk iphoneos \
+          archive \
+          -allowProvisioningUpdates
+#      - name: Upload the artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Total-Fleet-iOS-Build
+#          path: path/test
       #      - name: show permission runner workspace
       #        run: ls -la ${{ runner.workspace }}
       #      - uses: actions/cache/restore@v3
