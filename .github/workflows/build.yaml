@@ -69,13 +69,10 @@ jobs:
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Check files if exist
         run: ls -la ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Check files if exist 2
+        run: ls -la /Users/runner/Library/MobileDevice/Provisioning\ Profiles
       - name: Build the app
-        run: xcodebuild \
-          -scheme HelloWorld \
-          -archivePath ci-ios-app.xcarchive \
-          -sdk iphoneos \
-          archive \
-          -allowProvisioningUpdates
+        run: xcodebuild -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive -allowProvisioningUpdates PROVISIONING_PROFILE_SPECIFIER=4f3ad50f-ece3-4416-936e-3c56b5bb5a00
 #      - name: Upload the artifact
 #        uses: actions/upload-artifact@v3
 #        with:
