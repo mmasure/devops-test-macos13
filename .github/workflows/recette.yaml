@@ -1,11 +1,11 @@
-name: Build App MacOS 13
+name: Recette build IOS App
 
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*.*.*-recette"
     branches:
-      - build
+      - develop
       - add_test
 
 jobs:
@@ -91,13 +91,6 @@ jobs:
           name: Release
           path: ~/work/devops-test-macos13/devops-test-macos13/Release
           if-no-files-found: error
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        if: startsWith(github.ref, 'refs/tags/')
-#        with:
-#          generate_release_notes: true
-#          token: ${{ secrets.GH_PAT }}
-#          files: ./Release//HelloWorld.ipa
 
   Release:
     if: startsWith(github.ref, 'refs/tags/')
