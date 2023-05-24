@@ -56,20 +56,23 @@ jobs:
           p12-filepath: $RUNNER_TEMP/build_certificate.p12
           keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
           keychain: $RUNNER_TEMP/app-signing.keychain-db
-      - name: Install the Apple provisioning profile
-        env:
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: |
-          # create variables
-          PP_PATH=$RUNNER_TEMP/7797000c-b827-4ec8-86f1-766ad285ef45.mobileprovision
-          
-          # import certificate and provisioning profile from secrets
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
-          
-          # apply provisioning profile
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - uses: nickwph/apple-provisioning-profile-action@v1
+        with:
+          profile-base64: ${{ secrets.PROVISIONING_PROFILE }}
+#      - name: Install the Apple provisioning profile
+#        env:
+#          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
+#          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+#        run: |
+#          # create variables
+#          PP_PATH=$RUNNER_TEMP/7797000c-b827-4ec8-86f1-766ad285ef45.mobileprovision
+#
+#          # import certificate and provisioning profile from secrets
+#          echo -n $BUILD_PROVISION_PROFILE_BASE64 | base64 --decode -o $PP_PATH
+#
+#          # apply provisioning profile
+#          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+#          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Check files if exist
         run: cat ~/Library/MobileDevice/Provisioning\ Profiles/7797000c-b827-4ec8-86f1-766ad285ef45.mobileprovision
       - name: Check files if exist 2
@@ -84,18 +87,3 @@ jobs:
           name: Release
           path: ~/work/devops-test-macos13/devops-test-macos13/Release
           if-no-files-found: error
-      #      - name: show permission runner workspace
-      #        run: ls -la ${{ runner.workspace }}
-      #      - uses: actions/cache/restore@v3
-      #        id: cache-restore
-      #        with:
-      #          path: ${{ runner.workspace }}
-      #          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-      #      - name: first check download artifact
-      #        run: ls -l ${{ runner.workspace }}/cache
-#      - uses: actions/download-artifact@master
-#        with:
-#          name: artifact
-#          path: ${{ runner.workspace }}
-#      - name: second check download artifact
-#        run: ls -l ${{ runner.workspace }}
