@@ -96,12 +96,15 @@ jobs:
         with:
           xcode-version: ${{ steps.common_vars.outputs.xcodeVersion }}
       - uses: actions/download-artifact@v3
+        id: download
         with:
           name: Release
-          path: ~/work/devops-test-macos13/devops-test-macos13/
+          path: ~/download/artifact
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           token: ${{ secrets.GH_PAT }}
-          files: ./Release/HelloWorld.ipa
+          files: ${{steps.download.outputs.download-path}}/HelloWorld.ipa
