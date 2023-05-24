@@ -78,7 +78,7 @@ jobs:
       - name: Check files if exist 2
         run: security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
       - name: Build the app
-        run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=7797000c-b827-4ec8-86f1-766ad285ef45
+        run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=7797000c-b827-4ec8-86f1-766ad285ef45 | xcpretty && exit ${PIPESTATUS[0]}
       - name: Archieve the app
         run: xcodebuild -exportArchive -archivePath ci-ios-app.xcarchive -exportPath Release -exportOptionsPlist build.plist -allowProvisioningUpdates
       - name: Upload the artifact
