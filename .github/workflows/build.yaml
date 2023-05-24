@@ -1,4 +1,4 @@
-name: test MacOS 13
+name: Build App MacOS 13
 
 on:
   push:
