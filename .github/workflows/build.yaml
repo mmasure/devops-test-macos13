@@ -74,9 +74,9 @@ jobs:
 #          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 #          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Check files if exist
-        run: cat ~/Library/MobileDevice/Provisioning\ Profiles/7797000c-b827-4ec8-86f1-766ad285ef45.mobileprovision
+        run: cat ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
       - name: Check files if exist 2
-        run: security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/7797000c-b827-4ec8-86f1-766ad285ef45.mobileprovision
+        run: security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
       - name: Build the app
         run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=7797000c-b827-4ec8-86f1-766ad285ef45
       - name: Archieve the app
