@@ -18,7 +18,7 @@ jobs:
         id: common_vars
         uses: CumulusDS/get-yaml-paths-action@v1.0.1
         with:
-          file: ./.github/workflows/config/env.test.yml
+          file: .github/workflows/config/env.test.yml
           var: test
           xcodeVersion: xcode.version
       - uses: maxim-lobanov/setup-xcode@v1
@@ -87,13 +87,13 @@ jobs:
         run: xcodebuild -exportArchive -archivePath ci-ios-app.xcarchive -exportPath Release -exportOptionsPlist build.plist -allowProvisioningUpdates
       - name: Copy dSYM file
         run: |
-          mv ${{ runner.workspace }}/ci-ios-app.xcarchive/dSYMs/HelloWorld.app.dSYM \
-          ${{ runner.workspace }}/Release
+          mv ${{ github.workspace }}/ci-ios-app.xcarchive/dSYMs/HelloWorld.app.dSYM \
+          ${{ github.workspace }}/Release
       - name: Upload the artifact
         uses: actions/upload-artifact@v3
         with:
           name: Release
-          path: ${{ runner.workspace }}/Release
+          path: ${{ github.workspace }}/Release
           if-no-files-found: error
 
   Release:
