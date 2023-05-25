@@ -18,7 +18,7 @@ jobs:
         id: common_vars
         uses: CumulusDS/get-yaml-paths-action@v1.0.1
         with:
-          file: ${{ github.workspace }}/.github/workflows/config/env.test.yml
+          file: ./.github/workflows/config/env.test.yml
           var: test
           xcodeVersion: xcode.version
       - uses: maxim-lobanov/setup-xcode@v1
@@ -28,6 +28,7 @@ jobs:
         run: sw_vers --productVersion
       - name: show Xcode version
         run: echo xcodebuild -version #| grep "Xcode_\d{0,2}(\.\d{1,2})"
+
       - name: Failed switch Xcode if not equals
         if: ${{ false }} # change to ${{ xcodebuildVersion == steps.common_vars.outputs.xcodeVersion }}
         run: exit 1
@@ -113,8 +114,6 @@ jobs:
         with:
           name: Release
           path: ~/download/artifact
-      - name: 'Echo download path'
-        run: echo ${{steps.download.outputs.download-path}}
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
