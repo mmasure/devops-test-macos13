@@ -31,6 +31,7 @@
 		0959CD642A13B57E004A9800 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0959CD672A13B57E004A9800 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		09B39DA72A25F5D7005922DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		09B39DA92A263AC4005922DE /* HelloWorld.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloWorld.xctestplan; sourceTree = "<group>"; };
 		09F07C1E2A1E438F00323805 /* HelloWorldTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HelloWorldTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F07C202A1E438F00323805 /* HelloWorldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloWorldTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -56,6 +57,7 @@
 		0959CD542A13B57D004A9800 = {
 			isa = PBXGroup;
 			children = (
+				09B39DA92A263AC4005922DE /* HelloWorld.xctestplan */,
 				0959CD5F2A13B57D004A9800 /* HelloWorld */,
 				09F07C1F2A1E438F00323805 /* HelloWorldTests */,
 				0959CD5E2A13B57D004A9800 /* Products */,

@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "A742138A-FAF9-42DB-8FC0-8349EC8A1143",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:HelloWorld.xcodeproj",
+      "identifier" : "0959CD5C2A13B57D004A9800",
+      "name" : "HelloWorld"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:HelloWorld.xcodeproj",
+        "identifier" : "09F07C1D2A1E438F00323805",
+        "name" : "HelloWorldTests"
+      }
+    }
+  ],
+  "version" : 1
+}

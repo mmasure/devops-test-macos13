@@ -44,7 +44,6 @@ jobs:
         run: echo "curl localization files"
 
   Test:
-    if: ${{ false }}
     name: Testing IOS App
     runs-on: macos-13
     needs:
