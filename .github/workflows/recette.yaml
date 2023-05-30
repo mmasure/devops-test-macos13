@@ -67,14 +67,23 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@master
-      - name: Get app version
-        run: |
-          xcrun agvtool new-version -all $(date +%Y%m%d%H%M%S)
       - name: Change Xcode version
         run: |
           xcversion select ${{ needs.Variables.outputs.xcodeVersion }}
-      - name: Exit
-        run: exit 1
+      - name: Update app version
+        run: |
+          xcrun agvtool new-version -all $(date +%Y%m%d%H%M%S)
+      - name: Show app version
+        run: |
+          agvtool what-marketing-version -terse1
+      - name: Set output app version
+        id: AppVersion
+        run: |
+          echo "VERSION=$(agvtool what-marketing-version -terse1)" >> $GITHUB_OUTPUT
+      - name: dump app version
+        run: echo ${{ steps.AppVersion.outputs.version }}
+#      - name: Exit
+#        run: exit 1
       - name: Install the Apple certificate
         uses: apple-actions/import-codesign-certs@v2
         with:
@@ -102,9 +111,11 @@ jobs:
       - name: Upload the artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Release
+          name: release-${{ steps.AppVersion.outputs.version }}-recette
           path: ${{ github.workspace }}/Release
           if-no-files-found: error
+    outputs:
+      version: ${{ steps.AppVersion.outputs.version }}
 
   Release:
     if: startsWith(github.ref, 'refs/tags/')
@@ -117,13 +128,14 @@ jobs:
       - uses: actions/download-artifact@v3
         id: download
         with:
-          name: Release
+          name: release-${{ needs.Build.outputs.version }}-recette
           path: ~/download/artifact
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           token: ${{ secrets.GH_PAT }}
+          name: recette-${{ needs.Build.outputs.version }}
           files:
             ${{steps.download.outputs.download-path}}/HelloWorld.ipa
             ${{steps.download.outputs.download-path}}/HelloWorld.app.dSYM
