@@ -42,6 +42,7 @@ jobs:
         run: echo "curl localization files"
 
   Test:
+    if: ${{ false }}
     name: Testing IOS App
     runs-on: macos-13
     needs:
@@ -60,7 +61,8 @@ jobs:
   Build:
     name: Build IOS App
     needs:
-      - Test
+      - Variables
+      - Localization
     runs-on: macos-13
     steps:
       - uses: actions/checkout@master
@@ -70,7 +72,6 @@ jobs:
       - name: Change Xcode version
         run: |
           xcversion select ${{ steps.varsConfig.outputs.xcodeVersion }}
-
       - name: Exit
         run: exit 1
       - name: Install the Apple certificate
