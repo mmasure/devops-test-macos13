@@ -21,6 +21,10 @@ jobs:
           file: ./.github/workflows/config/env.test.yml
           var: test
           xcodeVersion: xcode.version
+      - name: check variable
+        run: |
+          echo ${{ steps.common_vars.outputs.var }}
+          echo ${{ steps.common_vars.outputs.xcodeVersion }}
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ steps.common_vars.outputs.xcodeVersion }}
