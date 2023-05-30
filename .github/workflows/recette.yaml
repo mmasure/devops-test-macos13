@@ -32,6 +32,8 @@ jobs:
       - name: Failed switch Xcode if not equals
         if: ${{ steps.selectedXcode.outputs.version != steps.varsConfig.outputs.xcodeCheckVersion }} # change to ${{ xcodebuildVersion == steps.varsConfig.outputs.xcodeVersion }}
         run: exit 1
+    outputs:
+      xcodeVersion: ${{ steps.selectedXcode.outputs.xcodeVersion }}
 
   Localization:
     name: Get localization files
@@ -71,7 +73,7 @@ jobs:
           xcrun agvtool new-version -all $(date +%Y%m%d%H%M%S)
       - name: Change Xcode version
         run: |
-          xcversion select ${{ steps.varsConfig.outputs.xcodeVersion }}
+          xcversion select ${{ needs.Variables.outputs.xcodeVersion }}
       - name: Exit
         run: exit 1
       - name: Install the Apple certificate
