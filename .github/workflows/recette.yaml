@@ -19,21 +19,15 @@ jobs:
         uses: CumulusDS/get-yaml-paths-action@v1.0.1
         with:
           file: ./.github/workflows/config/env.test.yml
-          var: test
           xcodeVersion: xcode.version
-      - name: check variable
-        run: |
-          echo ${{ steps.common_vars.outputs.var }}
-          echo ${{ steps.common_vars.outputs.xcodeVersion }}
-      - name: show invisible folder
-        run: ls -lla ./
+          xcodeCheckVersion: xcode.checkVersion
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ steps.common_vars.outputs.xcodeVersion }}
-      - name: check OSX version
-        run: sw_vers --productVersion
+#      - name: check OSX version
+#        run: sw_vers --productVersion
       - name: show Xcode version
-        run: echo xcodebuild -version #| grep "Xcode_\d{0,2}(\.\d{1,2})"
+        run: echo xcodebuild -version | grep "Xcode"
 
       - name: Failed switch Xcode if not equals
         if: ${{ false }} # change to ${{ xcodebuildVersion == steps.common_vars.outputs.xcodeVersion }}
