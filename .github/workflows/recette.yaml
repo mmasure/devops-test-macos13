@@ -33,7 +33,7 @@ jobs:
         if: ${{ steps.selectedXcode.outputs.version != steps.varsConfig.outputs.xcodeCheckVersion }} # change to ${{ xcodebuildVersion == steps.varsConfig.outputs.xcodeVersion }}
         run: exit 1
     outputs:
-      xcodeVersion: ${{ steps.selectedXcode.outputs.xcodeVersion }}
+      xcodeVersion: ${{ steps.varsConfig.outputs.xcodeVersion }}
 
   Localization:
     name: Get localization files
