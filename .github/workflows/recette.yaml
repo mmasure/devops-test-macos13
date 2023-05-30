@@ -6,7 +6,7 @@ on:
       - "v*.*.*-recette"
     branches:
       - develop
-      - add_test
+      - add_*
 
 jobs:
   Variables:
