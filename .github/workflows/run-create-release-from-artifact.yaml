@@ -30,7 +30,6 @@ jobs:
           name: ${{ inputs.nameArtifact }}
       - name: Remove string from name artifact
         id: reformatTagName
-        description:
         run: |
           nameArtifact=${{ inputs.nameArtifact }}
           echo "NAME=release-${nameArtifact#*-}" >> $GITHUB_OUTPUT
@@ -48,6 +47,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          draft: false
           tag_name: ${{ steps.reformatTagName.outputs.name }}
           generate_release_notes: true
           token: ${{ secrets.GH_PAT }}
