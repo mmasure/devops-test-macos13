@@ -1,0 +1,36 @@
+name: Run release creation from an artifact
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: choice
+        description: Repository branch
+        options:
+          - main
+      nameArtifact :
+        type: string
+        description: Give the artifact name
+        required: true
+
+jobs:
+  Release:
+    name: Build release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v3
+        id: download
+        with:
+          name: ${{ inputs.nameArtifact }}
+          path: ~/download/artifact
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          token: ${{ secrets.GH_PAT }}
+          name: ${{ inputs.nameArtifact }}
+          files:
+            ${{steps.download.outputs.download-path}}/HelloWorld.ipa
+            ${{steps.download.outputs.download-path}}/HelloWorld.app.dSYM

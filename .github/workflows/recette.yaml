@@ -5,8 +5,10 @@ on:
     tags:
       - "v*.*.*-recette"
     branches:
-      - develop
-      - add_*
+      - feature/add_*
+
+env:
+  ENV: recette
 
 jobs:
   Variables:
@@ -111,7 +113,7 @@ jobs:
       - name: Upload the artifact
         uses: actions/upload-artifact@v3
         with:
-          name: release-${{ steps.AppVersion.outputs.version }}-recette
+          name: release-${{ steps.AppVersion.outputs.version }}
           path: ${{ github.workspace }}/Release
           if-no-files-found: error
     outputs:
@@ -128,14 +130,14 @@ jobs:
       - uses: actions/download-artifact@v3
         id: download
         with:
-          name: release-${{ needs.Build.outputs.version }}-recette
+          name: release-${{ needs.Build.outputs.version }}
           path: ~/download/artifact
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           token: ${{ secrets.GH_PAT }}
-          name: recette-${{ needs.Build.outputs.version }}
+          name: prerelease-${{ needs.Build.outputs.version }}
           files:
             ${{steps.download.outputs.download-path}}/HelloWorld.ipa
             ${{steps.download.outputs.download-path}}/HelloWorld.app.dSYM
