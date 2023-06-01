@@ -1,0 +1,19 @@
+on:
+  workflow_call:
+    inputs:
+      xcodeversion:
+        required: true
+        type: string
+
+jobs:
+  Test:
+    name: Launch xcode test unit
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@master
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ inputs.xcodeversion }}
+      - name: Run unit test
+        run: |
+          xcodebuild clean test -scheme HelloWorld -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' | xcpretty && exit ${PIPESTATUS[0]}

@@ -17,26 +17,24 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
-      - name: Get common variables
-        id: varsConfig
-        uses: CumulusDS/get-yaml-paths-action@v1.0.1
-        with:
-          file: ./.github/workflows/config/env.test.yml
-          xcodeVersion: xcode.version
-          xcodeCheckVersion: xcode.checkVersion
+#      - name: Get common variables
+#        id: varsConfig
+#        uses: CumulusDS/get-yaml-paths-action@v1.0.1
+#        with:
+#          file: ./.github/workflows/config/env.test.yml
+#          xcodeVersion: xcode.version
+#          xcodeCheckVersion: xcode.checkVersion
       - name: Change Xcode version
         run: |
-          xcversion select ${{ steps.varsConfig.outputs.xcodeVersion }}
+          xcversion select ${{ vars.XCODE_VERSION }}
       - name: check OSX version
         run: sw_vers --productVersion
       - name: get Xcode version selected
         id: selectedXcode
         run: echo "VERSION=$(xcversion selected| grep "Xcode ")" >> $GITHUB_OUTPUT #\d{0,2}(\.\d{1,2}")
       - name: Failed switch Xcode if not equals
-        if: ${{ steps.selectedXcode.outputs.version != steps.varsConfig.outputs.xcodeCheckVersion }} # change to ${{ xcodebuildVersion == steps.varsConfig.outputs.xcodeVersion }}
+        if: ${{ steps.selectedXcode.outputs.version != vars.CHECK_VERSION }} # change to ${{ xcodebuildVersion == steps.varsConfig.outputs.xcodeVersion }}
         run: exit 1
-    outputs:
-      xcodeVersion: ${{ steps.varsConfig.outputs.xcodeVersion }}
 
   Localization:
     name: Get localization files
@@ -62,10 +60,13 @@ jobs:
 #          xcodebuild clean test -scheme HelloWorld -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' | xcpretty && exit ${PIPESTATUS[0]}
 
   Test:
-    name: Testing IOS App
-    uses: ./.github/workflows/call/test-unit-mycard-ios.yml
+    name: Run test unit
+    uses: ./.github/workflows/wc_test.yml
+    needs:
+      - Variables
+      - Localization
     with:
-      xcodeversion: ${{ steps.varsConfig.outputs.xcodeVersion }}
+      xcodeversion: ${{ vars.XCODE_VERSION }}
 
   Build:
     name: Build IOS App
@@ -77,7 +78,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Change Xcode version
         run: |
-          xcversion select ${{ needs.Variables.outputs.xcodeVersion }}
+          xcversion select ${{ vars.XCODE_VERSION }}
       - name: Update app version
         run: |
           xcrun agvtool new-version -all $(date +%Y%m%d%H%M%S)
