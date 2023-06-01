@@ -1,0 +1,17 @@
+#Source: https://github.com/nickwph/apple-provisioning-profile-action
+name: Apple Provisioning Profile Action
+description: Install a provision profile on macOS runners for Xcode development
+inputs:
+  profile-base64:
+    description: The Apple provisioning profile which is base64 encoded
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      if: ${{ inputs.profile-base64 != null }}
+      run: echo -n ${{ inputs.profile-base64 }} | base64 --decode -o $RUNNER_TEMP/profile.mobileprovision
+    - shell: bash
+      run: |
+        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        cp $RUNNER_TEMP/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
