@@ -105,22 +105,55 @@ jobs:
 #        uses: nickwph/apple-provisioning-profile-action@v1
 #        with:
 #          profile-base64: ${{ secrets.PROVISIONING_PROFILE }}
-      - name: Install the Apple certificate
-        uses: ./.github/actions/apple-certificate
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-          p12-filepath: $RUNNER_TEMP/build_certificate.p12
-          keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
-          keychain: $RUNNER_TEMP/app-signing.keychain-db
       - name: Install the Apple provisioning profile
         uses: ./.github/actions/apple-provisionning
         with:
-          profile-base64: ${{ secrets.PROVISIONING_PROFILE }}
+          PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
+          PROFILE_NAME: 4f3ad50f-ece3-4416-936e-3c56b5bb5a00
+      - name: Install the Apple certificate
+        if: always()
+        uses: ./.github/actions/apple-certificate
+        with:
+          P12_FILE_BASE64: ${{ secrets.CERTIFICATES_P12 }}
+          P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Check files
+        if: always()
+        run: ls -lla ./
+      - name: Check files
+        if: always()
+        run: ls -lla $RUNNER_TEMP
+#      - name: Install the Apple certificate and provisioning profile
+#        if: always()
+#        env:
+#          BUILD_CERTIFICATE_BASE64: ${{ secrets.CERTIFICATES_P12 }}
+#          P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+#          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+#        run: |
+#          # create variables
+#          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+#          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+#
+#          # import certificate and provisioning profile from secrets
+#          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+#
+#          # create temporary keychain
+#          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+#          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+#          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+#
+#          # import certificate to keychain
+#          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+#          security list-keychain -d user -s $KEYCHAIN_PATH
+#      - name: Check files
+#        if: always()
+#        run: ls -lla ./
 #      - name: Check files if exist
-#        run: cat ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+#        if: always()
+#        run: cat ~/Library/MobileDevice/Provisioning\ Profiles/4f3ad50f-ece3-4416-936e-3c56b5bb5a00.mobileprovision
 #      - name: Check files if exist 2
-#        run: security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+#        if: always()
+#        run: security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/4f3ad50f-ece3-4416-936e-3c56b5bb5a00.mobileprovision
       - name: Build the app
         run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=7797000c-b827-4ec8-86f1-766ad285ef45 | xcpretty && exit ${PIPESTATUS[0]}
       - name: Archieve the app
