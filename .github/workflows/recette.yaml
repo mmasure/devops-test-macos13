@@ -47,55 +47,18 @@ jobs:
 
   Build:
     name: Build IOS App
+    uses: ./.github/workflows/wc_build.yml
     needs:
       - Variables
       - Localization
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@master
-      - name: Change Xcode version
-        run: |
-          xcversion select ${{ vars.XCODE_VERSION }}
-      - name: Update app version
-        run: |
-          xcrun agvtool new-version -all $(date +%Y%m%d%H%M%S)
-      - name: Show app version
-        run: |
-          agvtool what-marketing-version -terse1
-      - name: Set output app version
-        id: AppVersion
-        run: |
-          echo "VERSION=$(agvtool what-marketing-version -terse1)" >> $GITHUB_OUTPUT
-      - name: dump app version
-        run: echo ${{ steps.AppVersion.outputs.version }}
-      - name: Install the Apple provisioning profile
-        uses: ./.github/actions/apple-provisionning
-        with:
-          PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
-          PROFILE_NAME: 4f3ad50f-ece3-4416-936e-3c56b5bb5a00
-      - name: Install the Apple certificate
-        if: always()
-        uses: ./.github/actions/apple-certificate
-        with:
-          P12_FILE_BASE64: ${{ secrets.CERTIFICATES_P12 }}
-          P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      - name: Build the app
-        run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=7797000c-b827-4ec8-86f1-766ad285ef45 | xcpretty && exit ${PIPESTATUS[0]}
-      - name: Archieve the app
-        run: xcodebuild -exportArchive -archivePath ci-ios-app.xcarchive -exportPath Release -exportOptionsPlist build.plist -allowProvisioningUpdates
-      - name: Copy dSYM file
-        run: |
-          mv ${{ github.workspace }}/ci-ios-app.xcarchive/dSYMs/HelloWorld.app.dSYM \
-          ${{ github.workspace }}/Release
-      - name: Upload the artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-${{ steps.AppVersion.outputs.version }}
-          path: ${{ github.workspace }}/Release
-          if-no-files-found: error
-    outputs:
-      version: ${{ steps.AppVersion.outputs.version }}
+    with:
+      xcodeversion: ${{ vars.XCODE_VERSION }}
+    secrets:
+      PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
+      CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}
+      CERTIFICATES_P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+
 
   Release:
     if: startsWith(github.ref, 'refs/tags/')
