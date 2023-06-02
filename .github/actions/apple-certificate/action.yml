@@ -25,7 +25,7 @@ runs:
     - shell: bash
       if: ${{ inputs.P12_FILE_BASE64 != null }}
       run: echo -n ${{ inputs.P12_FILE_BASE64 }} | base64 --decode -o ${{ inputs.P12_FILEPATH }}
-      # create temporary keychain
+    # create temporary keychain
     - shell: bash
       run: security create-keychain -p "${{ inputs.KEYCHAIN_PASSWORD }}" ${{ inputs.KEYCHAIN_PATH }}
     - shell: bash
@@ -34,38 +34,8 @@ runs:
       run: security unlock-keychain -p "${{ inputs.KEYCHAIN_PASSWORD }}" ${{ inputs.KEYCHAIN_PATH }}
     - shell: bash
       run: ls -lla $RUNNER_TEMP
+    # import certificate to keychain
     - shell: bash
       run: security import ${{ inputs.P12_FILEPATH }} -P "${{ inputs.P12_PASSWORD }}" -A -t cert -f pkcs12 -k ${{ inputs.KEYCHAIN_PATH }}
     - shell: bash
       run: security list-keychain -d user -s ${{ inputs.KEYCHAIN_PATH }}
-#        echo -n ${{ inputs.P12_FILE_BASE64 }} | base64 --decode -o $RUNNER_TEMP/build_certificate.p12
-#        # create temporary keychain
-#        security create-keychain -p "${{ inputs.KEYCHAIN_PASSWORD }}" $RUNNER_TEMP/app-signing.keychain-db
-#        security set-keychain-settings -lut 21600 $$RUNNER_TEMP/app-signing.keychain-db
-#        security unlock-keychain -p "${{ inputs.KEYCHAIN_PASSWORD }}" $RUNNER_TEMP/app-signing.keychain-db
-#      # import certificate to keychain
-#        security import $RUNNER_TEMP/build_certificate.p12 -P ${{ inputs.P12_PASSWORD }} -A -T cert -f pkcs12 -k ${{ inputs.P12_FILEPATH }}
-#        security list-keychain -d user -s $RUNNER_TEMP/app-signing.keychain-db
-
-       # create variables
-#        CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-#        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-#        BUILD_CERTIFICATE_BASE64=${{ inputs.P12_FILE_BASE64 }}
-#        KEYCHAIN_PASSWORD=${{ inputs.KEYCHAIN_PASSWORD }}
-#        P12_PASSWORD=${{ inputs.P12_PASSWORD }}
-#    - shell: bash
-#      run: |
-#        echo $CERTIFICATE_PATH
-#        echo $KEYCHAIN_PATH
-#
-#       # import certificate and provisioning profile from secrets
-#        echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-#
-#       # create temporary keychain
-#        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-#        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-#        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-#
-#       # import certificate to keychain
-#        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-#        security list-keychain -d user -s $KEYCHAIN_PATH
