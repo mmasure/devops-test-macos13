@@ -25,7 +25,7 @@ jobs:
         id: download
         with:
           github_token: ${{ secrets.GH_PAT }}
-          workflow: recette.yaml
+          workflow: recette.yaml # prerelease workflow name
           workflow_conclusion: success
           name: ${{ inputs.nameArtifact }}
       - name: Remove string from name artifact
@@ -41,7 +41,7 @@ jobs:
           custom_tag: ${{ steps.reformatTagName.outputs.name }}
           tag_prefix: "" # should have "release-" with rules and regex on artifact name
       - name: Zip the Dsym file
-        run: zip -r HelloWorld.app.dSYM.zip HelloWorld.app.dSYM
+        run: zip -r ${{ PROJECT_NAME }}.app.dSYM.zip ${{ PROJECT_NAME }}.app.dSYM
       - name: check files 2
         run: ls -lla ./
       - name: Create GitHub Release
@@ -53,5 +53,5 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           name: ${{ steps.reformatTagName.outputs.name }}
           files: |
-            HelloWorld.app.dSYM.zip
-            HelloWorld.ipa
+            ${{ PROJECT_NAME }}.app.dSYM.zip
+            ${{ PROJECT_NAME }}.ipa

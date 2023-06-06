@@ -4,6 +4,9 @@ on:
       xcodeversion:
         required: true
         type: string
+      profile_name:
+        required: true
+        type: string
     secrets:
       PROVISIONING_PROFILE:
         required: true
@@ -41,7 +44,7 @@ jobs:
         uses: ./.github/actions/apple-provisionning
         with:
           PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
-          PROFILE_NAME: 4f3ad50f-ece3-4416-936e-3c56b5bb5a00
+          PROFILE_NAME: ${{ vars.profile_name }}
       - name: Install the Apple certificate
         uses: ./.github/actions/apple-certificate
         with:

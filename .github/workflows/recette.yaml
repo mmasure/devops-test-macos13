@@ -53,6 +53,7 @@ jobs:
       - Localization
     with:
       xcodeversion: ${{ vars.XCODE_VERSION }}
+      profile_name: ${{ vars.PROFILE_NAME }}
     secrets:
       PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
       CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}
