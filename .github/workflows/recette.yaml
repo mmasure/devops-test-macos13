@@ -54,6 +54,7 @@ jobs:
     with:
       xcodeversion: ${{ vars.XCODE_VERSION }}
       profile_name: ${{ vars.PROFILE_NAME }}
+      configuration_build: ${{ vars.CONFIGURATION_BUILD }}
     secrets:
       PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
       CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}

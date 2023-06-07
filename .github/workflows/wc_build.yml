@@ -7,6 +7,9 @@ on:
       profile_name:
         required: true
         type: string
+      configuration_build:
+        required: true
+        type: string
     secrets:
       PROVISIONING_PROFILE:
         required: true
@@ -52,7 +55,7 @@ jobs:
           P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       - name: Build the app
-        run: xcodebuild -configuration Release -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=7797000c-b827-4ec8-86f1-766ad285ef45 | xcpretty && exit ${PIPESTATUS[0]}
+        run: xcodebuild -configuration ${{ vars.configuration_build }} -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=${{ vars.profile_name }} | xcpretty && exit ${PIPESTATUS[0]}
       - name: Archieve the app
         run: xcodebuild -exportArchive -archivePath ci-ios-app.xcarchive -exportPath Release -exportOptionsPlist build.plist -allowProvisioningUpdates
       - name: Copy dSYM file
