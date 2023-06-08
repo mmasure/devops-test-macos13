@@ -2,7 +2,7 @@ name: Schedule build with new features from develop
 
 on:
   schedule:
-    - cron: '* 0/2 * * *'
+    - cron: '0 8-18/2 * * *'
 
 jobs:
   check_changes:
@@ -18,9 +18,9 @@ jobs:
         run: echo ${{ github.sha }}
       - id: should_run
         continue-on-error: true
-        name: check latest commit is less than 2 minutes
+        name: check latest commit is less than 2 hours
         if: ${{ github.event_name == 'schedule' }}
-        run: test -z $(git rev-list  --after="2 minutes"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
+        run: test -z $(git rev-list  --after="2 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
 
   build:
     needs:
