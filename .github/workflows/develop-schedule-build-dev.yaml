@@ -2,7 +2,7 @@ name: Schedule build with new features from develop
 
 on:
   schedule:
-    - cron: '0/2 * * * *'
+    - cron: '* 0/2 * * *'
 
 jobs:
   check_changes:
