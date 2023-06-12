@@ -41,7 +41,7 @@ jobs:
           custom_tag: ${{ steps.reformatTagName.outputs.name }}
           tag_prefix: "" # should have "release-" with rules and regex on artifact name
       - name: Zip the Dsym file
-        run: zip -r ${{ PROJECT_NAME }}.app.dSYM.zip ${{ PROJECT_NAME }}.app.dSYM
+        run: zip -r ${{ vars.PROJECT_NAME }}.app.dSYM.zip ${{ vars.PROJECT_NAME }}.app.dSYM
       - name: check files 2
         run: ls -lla ./
       - name: Create GitHub Release
@@ -53,5 +53,5 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           name: ${{ steps.reformatTagName.outputs.name }}
           files: |
-            ${{ PROJECT_NAME }}.app.dSYM.zip
-            ${{ PROJECT_NAME }}.ipa
+            ${{ vars.PROJECT_NAME }}.app.dSYM.zip
+            ${{ vars.PROJECT_NAME }}.ipa

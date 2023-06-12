@@ -4,6 +4,9 @@ on:
       xcodeversion:
         required: true
         type: string
+      project_name:
+        required: true
+        type: string
 
 jobs:
   Test:
@@ -16,4 +19,4 @@ jobs:
           xcode-version: ${{ inputs.xcodeversion }}
       - name: Run unit test
         run: |
-          xcodebuild clean test -scheme HelloWorld -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild clean test -scheme ${{ inputs.project_name }} -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' | xcpretty && exit ${PIPESTATUS[0]}

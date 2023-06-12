@@ -32,7 +32,9 @@ jobs:
         run: exit 1
       - name: Set variables env
         id: setEnvVariable
-        run: echo "CONFIG_BUILD=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
+        run: |
+          echo "CONFIG_BUILD=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
+          echo "ENVIRONMENT=${{ jobs.Variables.environment }}" >> $GITHUB_OUTPUT
 
   Localization:
     name: Get localization files
@@ -50,6 +52,7 @@ jobs:
       - Localization
     with:
       xcodeversion: ${{ vars.XCODE_VERSION }}
+      project_name: ${{ vars.PROJECT_NAME }}
 
   Build:
     name: Build IOS App
@@ -58,9 +61,13 @@ jobs:
       - Variables
       - Localization
     with:
-      xcodeversion: ${{ vars.XCODE_VERSION }}
-      profile_name: ${{ vars.PROFILE_NAME }}
+      environment: ${{ jobs.Variables.environment }}
+      xcodeversion: ${{ vars.XCODE_VERSION }} #variable global
+      profile_name: ${{ vars.PROFILE_NAME }} #variable env
       configuration_build: ${{ needs.Variables.outputs.config_build }}
+      project_name: ${{ vars.PROJECT_NAME }}
+      plist_path: ${{ vars.PLIST_PATH }}
+      xarchivePath: ${{ vars.XARCHIVEPATH }}
     secrets:
       PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
       CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}
@@ -86,7 +93,7 @@ jobs:
         with:
           generate_release_notes: true
           token: ${{ secrets.GH_PAT }}
-          name: prerelease-${{ needs.Build.outputs.version }}
+          name: prerelease-${{ needs.Build.outputs.version }} #Mettre les 5premières lettre et chiffre du SHA du last commit
           files:
-            ${{steps.download.outputs.download-path}}/HelloWorld.ipa
-            ${{steps.download.outputs.download-path}}/HelloWorld.app.dSYM
+            ${{steps.download.outputs.download-path}}/${{ vars.PROJECT_NAME }}.ipa
+            ${{steps.download.outputs.download-path}}/${{ vars.PROJECT_NAME }}.app.dSYM

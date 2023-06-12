@@ -1,6 +1,10 @@
 on:
   workflow_call:
     inputs:
+      environment:
+        required: false
+        default: 'dev'
+        type: string
       xcodeversion:
         required: true
         type: string
@@ -10,14 +14,30 @@ on:
       configuration_build:
         required: true
         type: string
+      project_name:
+        required: true
+        type: string
+      xarchivePath:
+        required: true
+        type: string
+      plist_path:
+        required: true
+        type: string
+      branches:
+        required: false
+        default: 'develop'
+        type: string
+
     secrets:
       PROVISIONING_PROFILE:
         required: true
       CERTIFICATES_P12:
         required: true
       CERTIFICATES_P12_PASSWORD:
-        required: true
+        required: false
       KEYCHAIN_PASSWORD:
+        required: true
+      GH_PAT:
         required: true
         
 jobs:
@@ -28,6 +48,10 @@ jobs:
       version: ${{ steps.AppVersion.outputs.version }}
     steps:
       - uses: actions/checkout@master
+        with:
+          ref: ${{ inputs.branches }}
+          token: ${{ secrets.GH_PAT }}
+          lfs: true
       - name: Change Xcode version
         run: |
           xcversion select ${{ inputs.xcodeversion }}
@@ -55,16 +79,16 @@ jobs:
           P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       - name: Build the app
-        run: xcodebuild -configuration ${{ inputs.configuration_build }} -scheme HelloWorld -archivePath ci-ios-app.xcarchive -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=${{ inputs.profile_name }} | xcpretty && exit ${PIPESTATUS[0]}
+        run: xcodebuild -configuration ${{ inputs.configuration_build }} -scheme ${{ inputs.project_name }} -archivePath ${{ inputs.xarchivePath }} -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=${{ inputs.profile_name }} | xcpretty && exit ${PIPESTATUS[0]}
       - name: Archieve the app
-        run: xcodebuild -exportArchive -archivePath ci-ios-app.xcarchive -exportPath Release -exportOptionsPlist build.plist -allowProvisioningUpdates
+        run: xcodebuild -exportArchive -archivePath ${{ inputs.xarchivePath }} -exportPath ${{ inputs.configuration_build }} -exportOptionsPlist ${{ inputs.plist_path }} -allowProvisioningUpdates
       - name: Copy dSYM file
         run: |
-          mv ${{ github.workspace }}/ci-ios-app.xcarchive/dSYMs/HelloWorld.app.dSYM \
+          mv ${{ github.workspace }}/${{ inputs.xarchivePath }}/dSYMs/${{ inputs.project_name }}.app.dSYM \
           ${{ github.workspace }}/Release
       - name: Upload the artifact
         uses: actions/upload-artifact@v3
         with:
-          name: release-${{ steps.AppVersion.outputs.version }}
+          name: ${{ inputs.environment }}-${{ steps.AppVersion.outputs.version }}
           path: ${{ github.workspace }}/Release
           if-no-files-found: error
