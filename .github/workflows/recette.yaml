@@ -7,9 +7,6 @@ on:
     branches:
       - develop
 
-#env:
-#  ENV: recette
-
 jobs:
   Variables:
     name: Set variables
@@ -36,20 +33,11 @@ jobs:
           echo "CONFIG_BUILD=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
           echo "ENVIRONMENT=${{ jobs.Variables.environment }}" >> $GITHUB_OUTPUT
 
-  Localization:
-    name: Get localization files
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v3
-      - name: curl localization files
-        run: echo "curl localization files"
-
   Test:
     name: Run test unit
     uses: ./.github/workflows/wc_test.yml
     needs:
       - Variables
-      - Localization
     with:
       xcodeversion: ${{ vars.XCODE_VERSION }}
       project_name: ${{ vars.PROJECT_NAME }}
@@ -59,7 +47,6 @@ jobs:
     uses: ./.github/workflows/wc_build.yml
     needs:
       - Variables
-      - Localization
     with:
       environment: ${{ jobs.Variables.environment }}
       xcodeversion: ${{ vars.XCODE_VERSION }} #variable global
