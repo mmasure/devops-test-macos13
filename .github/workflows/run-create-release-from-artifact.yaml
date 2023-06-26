@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
         with:
-          ref: ${{ inputs.branches }}
+          ref: ${{ inputs.branch }}
       - uses: dawidd6/action-download-artifact@v2.27.0
         id: download
         with:
