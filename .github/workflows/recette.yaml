@@ -37,17 +37,17 @@ jobs:
         id: setEnvVar
         run: echo "env=${{ matrix.environment }}" >> $GITHUB_OUTPUT
 
-#  Dump:
-#    name: Dump step
-#    runs-on: macos-13
-#    needs:
-#      - Variables
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Dump variables
-#        run: |
-#          echo ${{ needs.Variables.outputs.configbuild }}
-#          echo ${{ needs.Variables.outputs.env }}
+  Dump:
+    name: Dump step
+    runs-on: macos-13
+    needs:
+      - Variables
+    steps:
+      - uses: actions/checkout@v3
+      - name: Dump variables
+        run: |
+          echo ${{ needs.Variables.outputs.configbuild }}
+          echo ${{ needs.Variables.outputs.env }}
 
   Test:
     name: Run test unit
@@ -61,6 +61,9 @@ jobs:
   Build:
     name: Build IOS App
     uses: ./.github/workflows/wc_build.yml
+    strategy:
+      matrix:
+        environment: [ 'pprd', 'prd' ]
     needs:
       - Variables
     with:
