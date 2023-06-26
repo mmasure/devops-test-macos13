@@ -16,8 +16,10 @@ jobs:
         environment: [ 'pprd', 'prd' ]
     environment: ${{ matrix.environment }}
     outputs:
-      configbuild: ${{ steps.setConfigBuilVar.outputs.configbuild }}
-      env: ${{ steps.setEnvVar.outputs.env }}
+      configbuild-prd: ${{ steps.setConfigBuilVar.outputs.configbuild-prd }}
+      configbuild-pprd: ${{ steps.setConfigBuilVar.outputs.configbuild-pprd }}
+      env-prd: ${{ steps.setEnvVar.outputs.env-prd }}
+      env-pprd: ${{ steps.setEnvVar.outputs.env-pprd }}
     steps:
       - uses: actions/checkout@v3
       - name: Change Xcode version
@@ -32,22 +34,27 @@ jobs:
         run: exit 1
       - name: Set variables configbuild
         id: setConfigBuilVar
-        run: echo "configbuild=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
+#        run: echo "configbuild=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
+        run: echo "::set-output name=configbuild-${{ matrix.environment }}::${{ vars.CONFIGURATION_BUILD }}"
       - name: Set env variable
         id: setEnvVar
-        run: echo "env=${{ matrix.environment }}" >> $GITHUB_OUTPUT
+#        run: echo "env=${{ matrix.environment }}" >> $GITHUB_OUTPUT
+        run: echo "::set-output name=env-${{ matrix.environment }}::${{ matrix.environment }}"
+
 
   Dump:
     name: Dump step
     runs-on: macos-13
+    strategy:
+      matrix:
+        environment: [ 'pprd', 'prd' ]
     needs:
       - Variables
     steps:
       - uses: actions/checkout@v3
       - name: Dump variables
         run: |
-          echo ${{ needs.Variables.outputs.configbuild }}
-          echo ${{ needs.Variables.outputs.env }}
+          echo ${{ toJson(needs.Variables.outputs) }}
 
   Test:
     name: Run test unit
