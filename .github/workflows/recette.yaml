@@ -11,7 +11,10 @@ jobs:
   Variables:
     name: Set variables
     runs-on: macos-13
-    environment: pprd
+    strategy:
+      matrix:
+        environment: [ 'pprd', 'prd' ]
+    environment: ${{ matrix.environment }}
     outputs:
       configbuild: ${{ steps.setConfigBuilVar.outputs.configbuild }}
       env: ${{ steps.setEnvVar.outputs.env }}
@@ -32,19 +35,19 @@ jobs:
         run: echo "configbuild=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
       - name: Set env variable
         id: setEnvVar
-        run: echo "env=pprd" >> $GITHUB_OUTPUT
+        run: echo "env=${{ matrix.environment }}" >> $GITHUB_OUTPUT
 
-  Dump:
-    name: Dump step
-    runs-on: macos-13
-    needs:
-      - Variables
-    steps:
-      - uses: actions/checkout@v3
-      - name: Dump variables
-        run: |
-          echo ${{ needs.Variables.outputs.configbuild }}
-          echo ${{ needs.Variables.outputs.env }}
+#  Dump:
+#    name: Dump step
+#    runs-on: macos-13
+#    needs:
+#      - Variables
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Dump variables
+#        run: |
+#          echo ${{ needs.Variables.outputs.configbuild }}
+#          echo ${{ needs.Variables.outputs.env }}
 
   Test:
     name: Run test unit
