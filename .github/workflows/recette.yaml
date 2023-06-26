@@ -13,12 +13,12 @@ jobs:
     runs-on: macos-13
     environment: pprd
     outputs:
-      config_build: ${{ steps.setEnvVariable.outputs.config_build }}
+      configbuild: ${{ steps.setConfigBuilVar.outputs.configbuild }}
+      env: ${{ steps.setEnvVar.outputs.env }}
     steps:
       - uses: actions/checkout@v3
       - name: Change Xcode version
-        run: |
-          xcversion select ${{ vars.XCODE_VERSION }}
+        run: xcversion select ${{ vars.XCODE_VERSION }}
       - name: check OSX version
         run: sw_vers --productVersion
       - name: Set selected Xcode version
@@ -27,11 +27,24 @@ jobs:
       - name: Failed switch Xcode if not equals
         if: ${{ steps.selectedXcode.outputs.version != vars.CHECK_VERSION }} # change to ${{ xcodebuildVersion == steps.varsConfig.outputs.xcodeVersion }}
         run: exit 1
-      - name: Set variables env
-        id: setEnvVariable
+      - name: Set variables configbuild
+        id: setConfigBuilVar
+        run: echo "configbuild=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
+      - name: Set env variable
+        id: setEnvVar
+        run: echo "env=pprd" >> $GITHUB_OUTPUT
+
+  Dump:
+    name: Dump step
+    runs-on: macos-13
+    needs:
+      - Variables
+    steps:
+      - uses: actions/checkout@v3
+      - name: Dump variables
         run: |
-          echo "CONFIG_BUILD=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
-          echo "ENVIRONMENT=${{ jobs.Variables.environment }}" >> $GITHUB_OUTPUT
+          echo ${{ needs.Variables.outputs.configbuild }}
+          echo ${{ needs.Variables.outputs.env }}
 
   Test:
     name: Run test unit
@@ -48,19 +61,19 @@ jobs:
     needs:
       - Variables
     with:
-      environment: ${{ jobs.Variables.environment }}
+      environment: ${{ needs.Variables.outputs.env }}
       xcodeversion: ${{ vars.XCODE_VERSION }} #variable global
-      profile_name: ${{ vars.PROFILE_NAME }} #variable env
-      configuration_build: ${{ needs.Variables.outputs.config_build }}
-      project_name: ${{ vars.PROJECT_NAME }}
-      plist_path: ${{ vars.PLIST_PATH }}
+      profileName: ${{ vars.PROFILE_NAME }} #variable env
+      configBuild: ${{ needs.Variables.outputs.configbuild }}
+      projectName: ${{ vars.PROJECT_NAME }}
+      plistPath: ${{ vars.PLIST_PATH }}
       xarchivePath: ${{ vars.XARCHIVEPATH }}
     secrets:
       PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
       CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}
       CERTIFICATES_P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-
+      GH_PAT: ${{ secrets.GH_PAT }}
 
   Release:
     if: startsWith(github.ref, 'refs/tags/')

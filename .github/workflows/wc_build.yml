@@ -8,19 +8,19 @@ on:
       xcodeversion:
         required: true
         type: string
-      profile_name:
+      profileName:
         required: true
         type: string
-      configuration_build:
+      configBuild:
         required: true
         type: string
-      project_name:
+      projectName:
         required: true
         type: string
       xarchivePath:
         required: true
         type: string
-      plist_path:
+      plistPath:
         required: true
         type: string
       branches:
@@ -71,7 +71,7 @@ jobs:
         uses: ./.github/actions/apple-provisionning
         with:
           PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
-          PROFILE_NAME: ${{ inputs.profile_name }}
+          PROFILE_NAME: ${{ inputs.profileName }}
       - name: Install the Apple certificate
         uses: ./.github/actions/apple-certificate
         with:
@@ -79,12 +79,12 @@ jobs:
           P12_PASSWORD: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       - name: Build the app
-        run: xcodebuild -configuration ${{ inputs.configuration_build }} -scheme ${{ inputs.project_name }} -archivePath ${{ inputs.xarchivePath }} -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=${{ inputs.profile_name }} | xcpretty && exit ${PIPESTATUS[0]}
+        run: xcodebuild -configuration ${{ inputs.configBuild }} -scheme ${{ inputs.projectName }} -archivePath ${{ inputs.xarchivePath }} -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=${{ inputs.profileName }} | xcpretty && exit ${PIPESTATUS[0]}
       - name: Archieve the app
-        run: xcodebuild -exportArchive -archivePath ${{ inputs.xarchivePath }} -exportPath ${{ inputs.configuration_build }} -exportOptionsPlist ${{ inputs.plist_path }} -allowProvisioningUpdates
+        run: xcodebuild -exportArchive -archivePath ${{ inputs.xarchivePath }} -exportPath ${{ inputs.configBuild }} -exportOptionsPlist ${{ inputs.plistPath }} -allowProvisioningUpdates
       - name: Copy dSYM file
         run: |
-          mv ${{ github.workspace }}/${{ inputs.xarchivePath }}/dSYMs/${{ inputs.project_name }}.app.dSYM \
+          mv ${{ github.workspace }}/${{ inputs.xarchivePath }}/dSYMs/${{ inputs.projectName }}.app.dSYM \
           ${{ github.workspace }}/Release
       - name: Upload the artifact
         uses: actions/upload-artifact@v3
