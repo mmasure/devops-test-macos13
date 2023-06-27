@@ -79,7 +79,7 @@ jobs:
       - name: Build the app
         run: xcodebuild -configuration ${{ vars.CONFIGURATION_BUILD }} -scheme ${{ inputs.projectName }} -archivePath ${{ inputs.xarchivePath }} -sdk iphoneos archive CODE_SIGNING_ALLOWED=No CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER=${{ inputs.profileName }} | xcpretty && exit ${PIPESTATUS[0]}
       - name: Archieve the app
-        run: xcodebuild -exportArchive -archivePath ${{ inputs.xarchivePath }} -exportPath ${{ inputs.configBuild }} -exportOptionsPlist ${{ inputs.plistPath }} -allowProvisioningUpdates
+        run: xcodebuild -exportArchive -archivePath ${{ inputs.xarchivePath }} -exportPath ${{ vars.CONFIGURATION_BUILD }} -exportOptionsPlist ${{ inputs.plistPath }} -allowProvisioningUpdates
       - name: Copy dSYM file
         run: |
           mv ${{ github.workspace }}/${{ inputs.xarchivePath }}/dSYMs/${{ inputs.projectName }}.app.dSYM \
