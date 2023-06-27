@@ -15,11 +15,11 @@ jobs:
       matrix:
         environment: [ 'pprd', 'prd' ]
     environment: ${{ matrix.environment }}
-    outputs:
-      configbuild-prd: ${{ steps.setConfigBuilVar.outputs.configbuild-prd }}
-      configbuild-pprd: ${{ steps.setConfigBuilVar.outputs.configbuild-pprd }}
-      env-prd: ${{ steps.setEnvVar.outputs.env-prd }}
-      env-pprd: ${{ steps.setEnvVar.outputs.env-pprd }}
+#    outputs:
+#      configbuild-prd: ${{ steps.setConfigBuilVar.outputs.configbuild-prd }}
+#      configbuild-pprd: ${{ steps.setConfigBuilVar.outputs.configbuild-pprd }}
+#      env-prd: ${{ steps.setEnvVar.outputs.env-prd }}
+#      env-pprd: ${{ steps.setEnvVar.outputs.env-pprd }}
     steps:
       - uses: actions/checkout@v3
       - name: Change Xcode version
@@ -32,30 +32,31 @@ jobs:
       - name: Failed switch Xcode if not equals
         if: ${{ steps.selectedXcode.outputs.version != vars.CHECK_VERSION }} # change to ${{ xcodebuildVersion == steps.varsConfig.outputs.xcodeVersion }}
         run: exit 1
-      - name: Set variables configbuild
-        id: setConfigBuilVar
-        run: echo "configbuild-${{ matrix.environment }}=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
-      - name: Set env variable
-        id: setEnvVar
-        run: echo "env-${{ matrix.environment }}=${{ matrix.environment }}" >> $GITHUB_OUTPUT
+# If you need dynamic variables, use this configuration
+#      - name: Set variables configbuild
+#        id: setConfigBuilVar
+#        run: echo "configbuild-${{ matrix.environment }}=${{ vars.CONFIGURATION_BUILD }}" >> $GITHUB_OUTPUT
+#      - name: Set env variable
+#        id: setEnvVar
+#        run: echo "env-${{ matrix.environment }}=${{ matrix.environment }}" >> $GITHUB_OUTPUT
 
 
-  Dump:
-    name: Dump step
-    runs-on: macos-13
-    strategy:
-      matrix:
-        environment: [ 'pprd', 'prd' ]
-    needs:
-      - Variables
-    steps:
-      - uses: actions/checkout@v3
-      - name: Dump variables
-        run: |
-          echo ${{ needs.Variables.outputs[format('configbuild-{0}', matrix.environment)] }}
-      - name: Dump variables 2
-        run: |
-          echo ${{ vars.CONFIGURATION_BUILD }}
+#  Dump:
+#    name: Dump step
+#    runs-on: macos-13
+#    strategy:
+#      matrix:
+#        environment: [ 'pprd', 'prd' ]
+#    needs:
+#      - Variables
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Dump variables
+#        run: |
+#          echo ${{ needs.Variables.outputs[format('configbuild-{0}', matrix.environment)] }}
+#      - name: Dump variables 2
+#        run: |
+#          echo ${{ vars.CONFIGURATION_BUILD }}
 
   Test:
     name: Run test unit
