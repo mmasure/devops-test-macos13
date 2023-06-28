@@ -1,0 +1,14 @@
+name: Build dev and recette release
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  Test:
+    name: Run test unit
+    uses: ./.github/workflows/wc_test.yml
+    with:
+      xcodeversion: ${{ vars.XCODE_VERSION }}
+      project_name: ${{ vars.PROJECT_NAME }}
