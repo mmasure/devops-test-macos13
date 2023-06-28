@@ -2,13 +2,7 @@ name: Run test unit on pull request
 
 on:
   pull_request:
-    types:
-      - opened
-    branches:
-      - '*'
-  push:
-    branches:
-      - '*'
+    types: [opened, reopened]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
