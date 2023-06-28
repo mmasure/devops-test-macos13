@@ -7,7 +7,7 @@ on:
 
 jobs:
   Test:
-    name: Run test unit
+    name: Run test unit - test PR
     uses: ./.github/workflows/wc_test.yml
     with:
       xcodeversion: ${{ vars.XCODE_VERSION }}
