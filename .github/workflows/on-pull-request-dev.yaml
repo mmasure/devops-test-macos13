@@ -1,9 +1,13 @@
-name: Build dev and recette release
+name: Run test unit on pull request
 
 on:
   pull_request:
     types:
       - opened
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   Test:
