@@ -2,10 +2,11 @@ name: Run test unit on pull request
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches:
+      - '**'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: run-test-unit
   cancel-in-progress: true
 
 jobs:
