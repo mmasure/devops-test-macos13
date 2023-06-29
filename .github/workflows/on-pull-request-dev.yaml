@@ -2,7 +2,7 @@ name: Run test unit on pull request
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches: [ '**' ]
 
 concurrency:
   group: run-test-unit
