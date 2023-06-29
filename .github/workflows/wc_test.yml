@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.base_ref }}
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ inputs.xcodeversion }}
