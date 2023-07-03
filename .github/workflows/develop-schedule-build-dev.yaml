@@ -3,6 +3,14 @@ name: Schedule build with new features from develop
 on:
   schedule:
     - cron: '0 8-18/2 * * *'
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: choice
+        description: Repository branch used (This skip the previous branch choice)
+        options:
+          - develop
+
 
 jobs:
   check_changes:
@@ -12,8 +20,15 @@ jobs:
       should_run: ${{ steps.should_run.outputs.should_run }}
     steps:
       - uses: actions/checkout@v2
+        if: ${{ inputs.branch }}
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/checkout@v2
+        if: ${{ inputs.branch == '' }}
         with:
           ref: develop
+      - name: Check github event name
+        run: echo ${{ github.event_name }}
       - name: print latest_commit
         run: echo ${{ github.sha }}
       - id: should_run
