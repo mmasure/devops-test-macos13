@@ -1,13 +1,16 @@
-name: Build dev and recette release
+name: Run test unit on pull request
 
 on:
   pull_request:
-    types:
-      - opened
+    branches: [ '**' ]
+
+concurrency:
+  group: run-test-unit
+  cancel-in-progress: true
 
 jobs:
   Test:
-    name: Run test unit
+    name: Run test unit - test PR
     uses: ./.github/workflows/wc_test.yml
     with:
       xcodeversion: ${{ vars.XCODE_VERSION }}
