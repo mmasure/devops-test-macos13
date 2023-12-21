@@ -1,0 +1,36 @@
+name: Build apple preview release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  getEnvironment:
+    name: Chosen trigger environment
+    runs-on: ubuntu
+    outputs:
+      envProduction: ${{ steps.setEnv.outputs.value }}
+    steps:
+      - name: Get pre-release asked or not
+        #        if: ${{ github.event.release.prerelease }}
+        id: prerelease
+        run: |
+          echo "value=true" >> $GITHUB_OUTPUT
+          echo ${{ github.event.release.prerelease }}
+
+      - name: Set environment
+        id: setEnv
+        run: |
+          echo "value=false" >> $GITHUB_OUTPUT
+          if [[ "${{ steps.prerelease.outputs.value }}" != true ]]; then
+            echo "value=true" >> $GITHUB_OUTPUT
+          fi
+          exit 0
+
+  NewStep:
+    name: Test var
+    runs-on: ubuntu
+    needs:
+      - getEnvironment
+    steps:
+      - run: echo ${{ needs.getEnvironment.outputs.envProduction }}
