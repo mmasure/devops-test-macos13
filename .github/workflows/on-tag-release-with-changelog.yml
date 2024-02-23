@@ -7,7 +7,7 @@ on:
 jobs:
   getEnvironment:
     name: Chosen trigger environment
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     outputs:
       envProduction: ${{ steps.setEnv.outputs.value }}
       tagRelease: ${{ steps.tag.outputs.value }}
