@@ -6,6 +6,7 @@ on:
 
 jobs:
   getEnvironment:
+    if: ${{ github.event.release.prerelease == 'false' }}
     name: Chosen trigger environment
     runs-on: ubuntu-latest
     outputs:
