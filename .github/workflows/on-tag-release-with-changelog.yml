@@ -34,7 +34,7 @@ jobs:
 
   NewStep:
     name: Test var
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     needs:
       - getEnvironment
     steps:
