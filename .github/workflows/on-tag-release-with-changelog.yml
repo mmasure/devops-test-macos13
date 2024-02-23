@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu
     outputs:
       envProduction: ${{ steps.setEnv.outputs.value }}
+      tagRelease: ${{ steps.tag.outputs.value }}
     steps:
       - name: Get pre-release asked or not
         #        if: ${{ github.event.release.prerelease }}
@@ -17,6 +18,10 @@ jobs:
         run: |
           echo "value=true" >> $GITHUB_OUTPUT
           echo ${{ github.event.release.prerelease }}
+
+      - name: get tag
+        id: tag
+        run: echo "value=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: Set environment
         id: setEnv
@@ -33,4 +38,6 @@ jobs:
     needs:
       - getEnvironment
     steps:
-      - run: echo ${{ needs.getEnvironment.outputs.envProduction }}
+      - run: |
+          echo ${{ needs.getEnvironment.outputs.envProduction }}
+          echo ${{ needs.getEnvironment.outputs.tagRelease }}
