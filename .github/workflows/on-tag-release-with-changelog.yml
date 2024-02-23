@@ -2,7 +2,7 @@ name: Build apple preview release
 
 on:
   release:
-    types: [created,published]
+    types: [published]
 
 jobs:
   getEnvironment:
