@@ -1,0 +1,31 @@
+name: Build-release-gh
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  DeleteReleasePipeline:
+    if: "!github.event.release.prerelease"
+    name: Delete prerelease pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Auto-delete
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          sleep 10
+          RUN_ID=$(gh run list --workflow on-tag-prerelease.yml | grep -oh 'skipped.*' | head -1 | awk '{print $6}')
+          cd ${{ github.workspace }}
+          echo $RUN_ID
+          gh run delete $RUN_ID
+          exit 0
+
+  NewStep:
+    name: Test var
+    runs-on: ubuntu-latest
+    needs:
+      - DeleteReleasePipeline
+    steps:
+      - run: echo "hello world"
