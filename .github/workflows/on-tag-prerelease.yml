@@ -5,6 +5,8 @@ on:
     types: [published]
 
 
+permissions: write-all
+
 jobs:
   DeletePrereeleasePipeline:
     if: github.event.release.prerelease
