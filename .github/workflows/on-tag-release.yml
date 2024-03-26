@@ -4,6 +4,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  actions: write
+
 jobs:
   DeleteReleasePipeline:
     if: "!github.event.release.prerelease"
